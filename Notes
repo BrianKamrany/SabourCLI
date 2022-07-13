@@ -1,0 +1,32 @@
+https://picocli.info/
+https://picocli.info/quick-guide.html
+
+start
+stats
+add
+list
+
+
+
+	public static Path findRelated(Path original, Path source, Path backup) {
+		return backup.resolve(original.relativize(source));
+	}
+
+add -f yes -s no -o xyz
+
+= Terminology
+Original
+originals
+Mirror
+mirroreds
+
+= Options
+copy read-only
+copy system
+copy hidden
+delete reflections
+
+= Relationships
+standard
+reverse
+bidirectional
