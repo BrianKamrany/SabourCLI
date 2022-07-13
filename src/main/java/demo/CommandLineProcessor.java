@@ -1,16 +1,9 @@
 package demo;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Option;
@@ -19,8 +12,8 @@ import picocli.CommandLine.Spec;
 @Component
 @Command(name = "")
 @Data
-@Slf4j
 public class CommandLineProcessor implements Runnable {
+	@Autowired private LinkService linkService;
     @Spec private CommandSpec commandSpecification;
     
 	@Override
@@ -44,26 +37,7 @@ public class CommandLineProcessor implements Runnable {
     		@Option(names = "-mirror", required = true) String mirror, 
     		@Option(names = "-bidirectional") boolean bidirectional/*, 
     		@Option(names = "-options") String options*/) throws Exception {
-    	logger.info("Adding link.");
-    	
-    	ObjectMapper jsonMapper = new ObjectMapper();
-		jsonMapper.enable(SerializationFeature.INDENT_OUTPUT);
-    	
-		Path linksPath = Paths.get("links.txt");
-    	Links links = new Links();
-		if (Files.exists(linksPath)) {
-			links = jsonMapper.readValue(linksPath.toFile(), Links.class);
-		}
-		
-		Link link = new Link();
-		link.setOriginal(Paths.get(original));
-		link.setMirror(Paths.get(mirror));
-		link.setRelationship(!bidirectional ? Relationship.STANDARD : Relationship.BIDIRECTIONAL);
-		links.add(link);
-
-		if (Files.notExists(linksPath))
-			logger.info("Creating links file.");
-		jsonMapper.writeValue(linksPath.toFile(), links);
+    	linkService.addLink(original, mirror, bidirectional);
     }
 
     @Command(name = "remove") 
