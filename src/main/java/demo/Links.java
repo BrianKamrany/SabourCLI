@@ -13,7 +13,7 @@ public class Links {
 		links.add(link);
 	}
 	
-	public List<Link> toList() {
-		return new ArrayList<>(links);
+	public List<Link> asList() {
+		return links;
 	}
 }

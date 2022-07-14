@@ -7,6 +7,7 @@ import lombok.Data;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Option;
+import picocli.CommandLine.Parameters;
 import picocli.CommandLine.Spec;
 
 @Component
@@ -41,8 +42,8 @@ public class CommandLineProcessor implements Runnable {
     }
 
     @Command(name = "remove") 
-    public void removeLink() {
-    	System.out.println("Remove");
+    public void removeLink(@Parameters(index = "0") int position) throws Exception {
+    	linkService.removeLink(position);
     }
 
     @Command(name = "stats") 

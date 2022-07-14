@@ -9,6 +9,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.exc.StreamReadException;
+import com.fasterxml.jackson.core.exc.StreamWriteException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -35,13 +36,15 @@ public class LinkService {
 
 		if (Files.notExists(LINKS_PATH))
 			logger.info("Creating links file.");
-		jsonMapper.writeValue(LINKS_PATH.toFile(), links);
+		writeLinks(links);
 	}
 
 	public void showLinks() throws StreamReadException, DatabindException, IOException {
+		logger.info("Showing links.");
+		
 		Links links = readLinks();
 		
-		List<Link> list = links.toList();
+		List<Link> list = links.asList();
 		for (int i = 0; i < list.size(); i++) {
 			Link link = list.get(i);
 			
@@ -52,11 +55,26 @@ public class LinkService {
 		}
 	}
 
+	public void removeLink(int position) throws StreamReadException, DatabindException, IOException {
+		logger.info("Removing link.");
+		
+		Links links = readLinks();
+		List<Link> list = links.asList();
+		int index = position - 1;
+		list.remove(index);
+		
+		writeLinks(links);
+	}
+
 	private Links readLinks() throws StreamReadException, DatabindException, IOException {
     	Links links = new Links();
 		if (Files.exists(LINKS_PATH)) {
 			links = jsonMapper.readValue(LINKS_PATH.toFile(), Links.class);
 		}
 		return links;
+	}
+
+	private void writeLinks(Links links) throws IOException, StreamWriteException, DatabindException {
+		jsonMapper.writeValue(LINKS_PATH.toFile(), links);
 	}
 }
