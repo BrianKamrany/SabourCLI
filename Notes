@@ -13,6 +13,16 @@ list
 	}
 
 add -f yes -s no -o xyz
+-options=cvf
+
+add
+-original=C:\Programming\eclipse-java-2022-03-R-win32-x86_64\workspace\SabourCLI\src\test\resources\original
+-mirror=C:\Programming\eclipse-java-2022-03-R-win32-x86_64\workspace\SabourCLI\src\test\resources\mirror
+
+add
+-original=C:\Programming\eclipse-java-2022-03-R-win32-x86_64\workspace\SabourCLI\src\test\resources\original
+-mirror=C:\Programming\eclipse-java-2022-03-R-win32-x86_64\workspace\SabourCLI\src\test\resources\mirror
+-bidirectional
 
 = Terminology
 Original

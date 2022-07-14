@@ -27,8 +27,8 @@ public class CommandLineProcessor implements Runnable {
     }
 
     @Command(name = "show", aliases = "list") 
-    public void showLinks() {
-    	System.out.println("LIst or show");
+    public void showLinks() throws Exception {
+    	linkService.showLinks();
     }
 
     @Command(name = "add") 

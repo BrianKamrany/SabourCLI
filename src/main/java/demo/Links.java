@@ -12,4 +12,8 @@ public class Links {
 	public void add(Link link) {
 		links.add(link);
 	}
+	
+	public List<Link> toList() {
+		return new ArrayList<>(links);
+	}
 }
