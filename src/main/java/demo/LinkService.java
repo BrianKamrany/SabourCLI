@@ -66,7 +66,7 @@ public class LinkService {
 		writeLinks(links);
 	}
 
-	private Links readLinks() throws StreamReadException, DatabindException, IOException {
+	public Links readLinks() throws StreamReadException, DatabindException, IOException {
     	Links links = new Links();
 		if (Files.exists(LINKS_PATH)) {
 			links = jsonMapper.readValue(LINKS_PATH.toFile(), Links.class);

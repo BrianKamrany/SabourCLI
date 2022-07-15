@@ -1,6 +1,7 @@
 package demo;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,8 +11,8 @@ import picocli.CommandLine.IFactory;
 
 @SpringBootApplication
 public class Application implements CommandLineRunner {
-	@Autowired private CommandLineProcessor cliProcessor;
-	@Autowired private IFactory picoCLISpringFactory;
+	@Inject private CommandLineProcessor cliProcessor;
+	@Inject private IFactory picoCLISpringFactory;
 
 	public static void main(String[] args) throws Exception {
 		SpringApplication.run(Application.class, args);

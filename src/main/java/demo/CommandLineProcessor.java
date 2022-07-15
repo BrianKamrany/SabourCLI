@@ -1,6 +1,7 @@
 package demo;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
+
 import org.springframework.stereotype.Component;
 
 import lombok.Data;
@@ -14,7 +15,8 @@ import picocli.CommandLine.Spec;
 @Command(name = "")
 @Data
 public class CommandLineProcessor implements Runnable {
-	@Autowired private LinkService linkService;
+	@Inject private MirrorMaker mirrorMaker;
+	@Inject private LinkService linkService;
     @Spec private CommandSpec commandSpecification;
     
 	@Override
@@ -23,8 +25,8 @@ public class CommandLineProcessor implements Runnable {
 	}
 
     @Command(name = "start") 
-    public void startBackup() {
-    	System.out.println("Start");
+    public void createMirrors() throws Exception {
+    	mirrorMaker.synchronize();
     }
 
     @Command(name = "show", aliases = "list") 
