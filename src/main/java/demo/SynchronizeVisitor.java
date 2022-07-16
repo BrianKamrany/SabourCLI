@@ -17,6 +17,8 @@ import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.DosFileAttributeView;
+import java.nio.file.attribute.DosFileAttributes;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,7 +39,7 @@ public class SynchronizeVisitor implements FileVisitor<Path> {
 	public FileVisitResult preVisitDirectory(Path source, BasicFileAttributes unused) throws IOException {
 		Path reflection = toReflection(original, source, mirror);
 		if (!Files.exists(reflection, LinkOption.NOFOLLOW_LINKS)) {
-			logger.info("Synchronizing folder: {}", reflection);
+			logger.info("Synchronizing directory: {}", reflection);
 			Files.createDirectory(reflection);
 		}
 		return CONTINUE;
@@ -47,10 +49,23 @@ public class SynchronizeVisitor implements FileVisitor<Path> {
 	public FileVisitResult visitFile(Path source, BasicFileAttributes unused) throws IOException {
 		Path reflection = toReflection(original, source, mirror);
 		if (!Files.exists(reflection, LinkOption.NOFOLLOW_LINKS)) {
-			logger.info("Synchronizing: {}", reflection);
+			logger.info("Synchronizing file: {}", reflection);
 			copyFile(source, temporary);
 			Files.move(temporary, reflection, REPLACE_EXISTING);
+			copyAttributes(source, reflection);
 		}
+		return CONTINUE;
+	}
+
+	@Override
+	public FileVisitResult postVisitDirectory(Path source, IOException ex) throws IOException {
+		if (ex != null) {
+			logger.warn("Failed to visit directory: {}", source);
+			logger.warn("", ex);
+			return CONTINUE;
+		}
+		Path reflection = toReflection(original, source, mirror);
+		copyAttributes(source, reflection);
 		return CONTINUE;
 	}
 
@@ -58,16 +73,6 @@ public class SynchronizeVisitor implements FileVisitor<Path> {
 	public FileVisitResult visitFileFailed(Path source, IOException ex) {
 		logger.warn("Failed to visit file: {}", source);
 		logger.warn("", ex);
-		return CONTINUE;
-	}
-
-	@Override
-	public FileVisitResult postVisitDirectory(Path source, IOException ex) {
-		if (ex != null) {
-			logger.warn("Failed to visit path: {}", source);
-			logger.warn("", ex);
-			return CONTINUE;
-		}
 		return CONTINUE;
 	}
 	
@@ -88,5 +93,16 @@ public class SynchronizeVisitor implements FileVisitor<Path> {
 				outputStream.write(copyBuffer, 0, bytes);
 			}
 		}
+	}
+
+	private void copyAttributes(Path source, Path reflection) throws IOException {
+			DosFileAttributeView sourceView = Files.getFileAttributeView(source, DosFileAttributeView.class);
+			DosFileAttributeView reflectionView = Files.getFileAttributeView(reflection, DosFileAttributeView.class);
+			DosFileAttributes sourceAttributes = sourceView.readAttributes();
+			//reflectionView.setArchive(sourceAttributes.isArchive());
+			//reflectionView.setHidden(sourceAttributes.isHidden());
+			//reflectionView.setReadOnly(sourceAttributes.isReadOnly());
+			//reflectionView.setSystem(sourceAttributes.isSystem());
+			reflectionView.setTimes(sourceAttributes.lastModifiedTime(), sourceAttributes.lastAccessTime(), sourceAttributes.creationTime());
 	}
 }

@@ -27,8 +27,18 @@ public class CommandLineProcessor implements Runnable {
 	}
 
     @Command(name = "start")
-    public void createMirrors() throws Exception {
+    public void start() throws Exception {
 		logger.info("Command: start");
+    }
+
+    @Command(name = "delete", aliases = "clean")
+    public void delete() throws Exception {
+		logger.info("Command: delete");
+    }
+
+    @Command(name = "mirror", aliases = "copy")
+    public void createMirrors() throws Exception {
+		logger.info("Command: mirror");
     	mirrorMaker.synchronize();
     }
 
@@ -54,7 +64,7 @@ public class CommandLineProcessor implements Runnable {
     	linkService.removeLink(position);
     }
 
-    @Command(name = "stats")
+    @Command(name = "stats", aliases = "statistics")
     public void calculateStatistics() {
 		logger.info("Command: statistics");
     	System.out.println("Stats");
