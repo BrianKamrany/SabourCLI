@@ -30,7 +30,6 @@ public class CommandLineProcessor implements Runnable {
     public void createMirrors() throws Exception {
 		logger.info("Command: start");
     	mirrorMaker.synchronize();
-		logger.info("Mirrors were made successfully.");
     }
 
     @Command(name = "show", aliases = "list")

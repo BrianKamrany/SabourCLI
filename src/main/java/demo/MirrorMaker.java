@@ -31,5 +31,7 @@ public class MirrorMaker {
 			SynchronizeVisitor visitor = new SynchronizeVisitor(link.getOriginal(), link.getMirror());
 			Files.walkFileTree(link.getOriginal(), visitor);
 		}
+		
+		logger.info("Mirrors were synchronized successfully.");
 	}
 }
