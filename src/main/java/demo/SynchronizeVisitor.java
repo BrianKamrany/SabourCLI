@@ -1,6 +1,7 @@
 package demo;
 
 import static java.nio.file.FileVisitResult.CONTINUE;
+import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 import java.io.BufferedInputStream;
@@ -13,7 +14,6 @@ import java.io.OutputStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
-import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -38,7 +38,7 @@ public class SynchronizeVisitor implements FileVisitor<Path> {
 	@Override
 	public FileVisitResult preVisitDirectory(Path source, BasicFileAttributes unused) throws IOException {
 		Path reflection = toReflection(original, source, mirror);
-		if (!Files.exists(reflection, LinkOption.NOFOLLOW_LINKS)) {
+		if (!Files.exists(reflection, NOFOLLOW_LINKS)) {
 			logger.info("Synchronizing directory: {}", reflection);
 			Files.createDirectory(reflection);
 		}
@@ -48,7 +48,7 @@ public class SynchronizeVisitor implements FileVisitor<Path> {
 	@Override
 	public FileVisitResult visitFile(Path source, BasicFileAttributes unused) throws IOException {
 		Path reflection = toReflection(original, source, mirror);
-		if (!Files.exists(reflection, LinkOption.NOFOLLOW_LINKS)) {
+		if (!isMirrored(source, reflection, true)) {
 			logger.info("Synchronizing file: {}", reflection);
 			copyFile(source, temporary);
 			Files.move(temporary, reflection, REPLACE_EXISTING);
@@ -96,13 +96,32 @@ public class SynchronizeVisitor implements FileVisitor<Path> {
 	}
 
 	private void copyAttributes(Path source, Path reflection) throws IOException {
-			DosFileAttributeView sourceView = Files.getFileAttributeView(source, DosFileAttributeView.class);
-			DosFileAttributeView reflectionView = Files.getFileAttributeView(reflection, DosFileAttributeView.class);
+			DosFileAttributeView sourceView = Files.getFileAttributeView(source, DosFileAttributeView.class, NOFOLLOW_LINKS);
+			DosFileAttributeView reflectionView = Files.getFileAttributeView(reflection, DosFileAttributeView.class, NOFOLLOW_LINKS);
 			DosFileAttributes sourceAttributes = sourceView.readAttributes();
 			//reflectionView.setArchive(sourceAttributes.isArchive());
 			//reflectionView.setHidden(sourceAttributes.isHidden());
 			//reflectionView.setReadOnly(sourceAttributes.isReadOnly());
 			//reflectionView.setSystem(sourceAttributes.isSystem());
 			reflectionView.setTimes(sourceAttributes.lastModifiedTime(), sourceAttributes.lastAccessTime(), sourceAttributes.creationTime());
+	}
+	
+	private boolean isMirrored(Path source, Path reflection, boolean file) throws IOException {
+		if (!Files.exists(reflection, NOFOLLOW_LINKS))
+			return false;
+
+		DosFileAttributeView sourceView = Files.getFileAttributeView(source, DosFileAttributeView.class, NOFOLLOW_LINKS);
+		DosFileAttributeView reflectionView = Files.getFileAttributeView(reflection, DosFileAttributeView.class, NOFOLLOW_LINKS);
+		DosFileAttributes sourceAttributes = sourceView.readAttributes();
+		DosFileAttributes reflectionAttributes = reflectionView.readAttributes();
+		
+		return sourceAttributes.creationTime().equals(reflectionAttributes.creationTime())
+			&& sourceAttributes.lastAccessTime().equals(reflectionAttributes.lastAccessTime())
+			&& sourceAttributes.lastModifiedTime().equals(reflectionAttributes.lastModifiedTime())
+			&& (file ? sourceAttributes.size() == reflectionAttributes.size() : true);
+			//&& sourceAttributes.isArchive() == reflectionAttributes.isArchive()
+			//&& sourceAttributes.isHidden() == reflectionAttributes.isHidden()
+			//&& sourceAttributes.isReadOnly() == reflectionAttributes.isReadOnly()
+			//&& sourceAttributes.isSystem() == reflectionAttributes.isSystem()
 	}
 }
