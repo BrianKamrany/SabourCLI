@@ -19,7 +19,7 @@ public class MirrorMaker {
 	@Inject private LinkService linkService;
 
 	public void synchronize() throws StreamReadException, DatabindException, IOException {
-		logger.info("Synchronizing.");
+		logger.info("Synchronizing mirrors.");
 		
 		Links links = linkService.readLinks();
 		

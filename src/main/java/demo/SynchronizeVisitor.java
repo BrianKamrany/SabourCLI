@@ -35,6 +35,11 @@ public class SynchronizeVisitor implements FileVisitor<Path> {
 
 	@Override
 	public FileVisitResult preVisitDirectory(Path source, BasicFileAttributes unused) throws IOException {
+		Path reflection = toReflection(original, source, mirror);
+		if (!Files.exists(reflection, LinkOption.NOFOLLOW_LINKS)) {
+			logger.info("Synchronizing folder: {}", reflection);
+			Files.createDirectory(reflection);
+		}
 		return CONTINUE;
 	}
 
@@ -58,8 +63,11 @@ public class SynchronizeVisitor implements FileVisitor<Path> {
 
 	@Override
 	public FileVisitResult postVisitDirectory(Path source, IOException ex) {
-		logger.warn("Failed to visit path: {}", ex);
-		logger.warn("", ex);
+		if (ex != null) {
+			logger.warn("Failed to visit path: {}", source);
+			logger.warn("", ex);
+			return CONTINUE;
+		}
 		return CONTINUE;
 	}
 	
