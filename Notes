@@ -16,6 +16,10 @@ add -f yes -s no -o xyz
 -options=cvf
 
 add
+-original="U:\2 - Secondary\3 - Tertiary\Programming"
+-mirror=C:\Programming\eclipse-java-2022-03-R-win32-x86_64\workspace\SabourCLI\src\test\resources\mirror
+
+add
 -original=C:\Programming\eclipse-java-2022-03-R-win32-x86_64\workspace\SabourCLI\src\test\resources\original
 -mirror=C:\Programming\eclipse-java-2022-03-R-win32-x86_64\workspace\SabourCLI\src\test\resources\mirror
 
@@ -40,3 +44,6 @@ delete reflections
 standard
 reverse
 bidirectional
+
+file walking fails on this absolutely
+java.nio.file.AccessDeniedException: U:\System Volume Information

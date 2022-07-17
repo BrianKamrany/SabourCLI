@@ -29,6 +29,7 @@ public class MirrorMaker {
 
 			logger.info("Original: {}", link.getOriginal());
 			SynchronizeVisitor visitor = new SynchronizeVisitor(link.getOriginal(), link.getMirror());
+			//PrintVisitor visitor = new PrintVisitor(link.getOriginal(), link.getMirror());
 			Files.walkFileTree(link.getOriginal(), visitor);
 		}
 		
