@@ -39,7 +39,7 @@ public class SynchronizeVisitor implements FileVisitor<Path> {
 	public FileVisitResult preVisitDirectory(Path source, BasicFileAttributes unused) throws IOException {
 		Path reflection = toReflection(original, source, mirror);
 		if (!isSystem(source) && !Files.exists(reflection, NOFOLLOW_LINKS)) {
-			logger.info("Synchronizing directory: {}", reflection);
+			logger.info("Dir: {}", reflection.getFileName());
 			Files.createDirectory(reflection);
 		}
 		return CONTINUE;
@@ -49,7 +49,7 @@ public class SynchronizeVisitor implements FileVisitor<Path> {
 	public FileVisitResult visitFile(Path source, BasicFileAttributes unused) throws IOException {
 		Path reflection = toReflection(original, source, mirror);
 		if (!isSystem(source) && !isMirrored(source, reflection, true)) {
-			logger.info("Synchronizing file: {}", reflection);
+			logger.info("File: {}", reflection.getFileName());
 			copyFile(source, temporary);
 			Files.move(temporary, reflection, REPLACE_EXISTING);
 			copyAttributes(source, reflection);
