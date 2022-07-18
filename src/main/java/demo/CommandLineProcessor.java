@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.base.Stopwatch;
 
+import demo.statistics.Statistics;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import picocli.CommandLine.Command;
@@ -21,6 +22,7 @@ import picocli.CommandLine.Spec;
 public class CommandLineProcessor implements Runnable {
 	@Inject private MirrorMaker mirrorMaker;
 	@Inject private LinkService linkService;
+	@Inject private StatisticsService statsService;
     @Spec private CommandSpec commandSpecification;
     
 	@Override
@@ -41,8 +43,7 @@ public class CommandLineProcessor implements Runnable {
     @Command(name = "mirror", aliases = "copy")
     public void createMirrors() throws Exception {
 		logger.info("Command: mirror");
-		Stopwatch timer = Stopwatch.createUnstarted();
-		timer.start();
+		Stopwatch timer = Stopwatch.createStarted();
     	mirrorMaker.synchronize();
 		timer.stop();
 		logger.info("Execution time: {}", timer);
@@ -71,14 +72,14 @@ public class CommandLineProcessor implements Runnable {
     }
 
     @Command(name = "stats", aliases = "statistics")
-    public void calculateStatistics() {
+    public void calculateStatistics() throws Exception {
 		logger.info("Command: statistics");
-    	System.out.println("Stats");
+		Statistics stats = statsService.calculateStatistics();
+		logger.info(stats.toString());
     }
 
     @Command(name = "recover")
     public void recoverFromMirrors() {
 		logger.info("Command: recover");
-    	System.out.println("Recover");
     }
 }

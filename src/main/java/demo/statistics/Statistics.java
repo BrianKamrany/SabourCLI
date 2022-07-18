@@ -20,6 +20,15 @@ public class Statistics {
 		this.count += stats.count;
 		this.bytes += stats.bytes;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Files: " + count + "\n");
+		builder.append("Bytes: " + bytes + "\n");
+		//builder.append("ETA: " + "1.5 hours" + "\n");
+		return builder.toString();
+	}
 	
 	//equals/hashcode
 }

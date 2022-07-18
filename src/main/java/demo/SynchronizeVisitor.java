@@ -88,7 +88,7 @@ public class SynchronizeVisitor implements FileVisitor<Path> {
 		return CONTINUE;
 	}
 	
-	private Path toReflection(Path original, Path source, Path mirror) {
+	protected static Path toReflection(Path original, Path source, Path mirror) {
 		return mirror.resolve(original.relativize(source));
 	}
 
@@ -118,7 +118,7 @@ public class SynchronizeVisitor implements FileVisitor<Path> {
 			reflectionView.setTimes(sourceAttributes.lastModifiedTime(), sourceAttributes.lastAccessTime(), sourceAttributes.creationTime());
 	}
 	
-	private boolean isMirrored(Path source, Path reflection, boolean file) throws IOException {
+	protected static boolean isMirrored(Path source, Path reflection, boolean file) throws IOException {
 		if (!Files.exists(reflection, NOFOLLOW_LINKS))
 			return false;
 
@@ -137,7 +137,7 @@ public class SynchronizeVisitor implements FileVisitor<Path> {
 			//&& sourceAttributes.isSystem() == reflectionAttributes.isSystem()
 	}
 
-	public boolean isSystem(Path path) throws IOException {
+	protected static boolean isSystem(Path path) throws IOException {
 		DosFileAttributeView pathView = Files.getFileAttributeView(path, DosFileAttributeView.class, NOFOLLOW_LINKS);
 		DosFileAttributes pathAttributes = pathView.readAttributes();
 		return pathAttributes.isSystem();
