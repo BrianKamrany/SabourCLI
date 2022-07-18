@@ -118,7 +118,7 @@ public class SynchronizeVisitor implements FileVisitor<Path> {
 		DosFileAttributes reflectionAttributes = reflectionView.readAttributes();
 		
 		return sourceAttributes.creationTime().equals(reflectionAttributes.creationTime())
-			&& sourceAttributes.lastAccessTime().equals(reflectionAttributes.lastAccessTime())
+			//&& sourceAttributes.lastAccessTime().equals(reflectionAttributes.lastAccessTime())
 			&& sourceAttributes.lastModifiedTime().equals(reflectionAttributes.lastModifiedTime())
 			&& (file ? sourceAttributes.size() == reflectionAttributes.size() : true);
 			//&& sourceAttributes.isArchive() == reflectionAttributes.isArchive()

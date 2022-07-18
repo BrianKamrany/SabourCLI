@@ -4,6 +4,8 @@ import javax.inject.Inject;
 
 import org.springframework.stereotype.Component;
 
+import com.google.common.base.Stopwatch;
+
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import picocli.CommandLine.Command;
@@ -39,7 +41,11 @@ public class CommandLineProcessor implements Runnable {
     @Command(name = "mirror", aliases = "copy")
     public void createMirrors() throws Exception {
 		logger.info("Command: mirror");
+		Stopwatch timer = Stopwatch.createUnstarted();
+		timer.start();
     	mirrorMaker.synchronize();
+		timer.stop();
+		logger.info("Execution time: {}", timer);
     }
 
     @Command(name = "show", aliases = "list")
