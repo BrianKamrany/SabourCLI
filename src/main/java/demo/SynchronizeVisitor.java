@@ -37,6 +37,11 @@ public class SynchronizeVisitor implements FileVisitor<Path> {
 
 	@Override
 	public FileVisitResult preVisitDirectory(Path source, BasicFileAttributes unused) throws IOException {
+		if (isSystem(source)) {
+			logger.warn("Sys dir: {}", source.getFileName());
+			return CONTINUE;
+		}
+
 		Path reflection = toReflection(original, source, mirror);
 		if (!isSystem(source) && !Files.exists(reflection, NOFOLLOW_LINKS)) {
 			logger.info("Dir: {}", reflection.getFileName());
@@ -47,6 +52,11 @@ public class SynchronizeVisitor implements FileVisitor<Path> {
 
 	@Override
 	public FileVisitResult visitFile(Path source, BasicFileAttributes unused) throws IOException {
+		if (isSystem(source)) {
+			logger.warn("Sys file: {}", source.getFileName());
+			return CONTINUE;
+		}
+		
 		Path reflection = toReflection(original, source, mirror);
 		if (!isSystem(source) && !isMirrored(source, reflection, true)) {
 			logger.info("File: {}", reflection.getFileName());

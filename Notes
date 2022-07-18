@@ -16,11 +16,15 @@ add -f yes -s no -o xyz
 -options=cvf
 
 add
--original="U:\2 - Secondary\3 - Tertiary\Programming"
+-original=C:\Programming\eclipse-java-2022-03-R-win32-x86_64\workspace\SabourCLI\src\test\resources\original
 -mirror=C:\Programming\eclipse-java-2022-03-R-win32-x86_64\workspace\SabourCLI\src\test\resources\mirror
 
 add
 -original=C:\Programming\eclipse-java-2022-03-R-win32-x86_64\workspace\SabourCLI\src\test\resources\original
+-mirror="U:\1 - Test"
+
+add
+-original="U:\1 - Test"
 -mirror=C:\Programming\eclipse-java-2022-03-R-win32-x86_64\workspace\SabourCLI\src\test\resources\mirror
 
 add
