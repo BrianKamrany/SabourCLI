@@ -42,7 +42,7 @@ public class SynchronizeVisitor implements FileVisitor<Path> {
 			return CONTINUE;
 		}
 
-		Path reflection = toReflection(original, source, mirror);
+		Path reflection = reflect(original, source, mirror);
 		if (!isSystem(source) && !Files.exists(reflection, NOFOLLOW_LINKS)) {
 			logger.info("Dir: {}", reflection.getFileName());
 			Files.createDirectory(reflection);
@@ -57,7 +57,7 @@ public class SynchronizeVisitor implements FileVisitor<Path> {
 			return CONTINUE;
 		}
 		
-		Path reflection = toReflection(original, source, mirror);
+		Path reflection = reflect(original, source, mirror);
 		if (!isSystem(source) && !isMirrored(source, reflection, true)) {
 			logger.info("File: {}", reflection.getFileName());
 			copyFile(source, temporary);
@@ -74,7 +74,7 @@ public class SynchronizeVisitor implements FileVisitor<Path> {
 			logger.warn("", ex);
 			return CONTINUE;
 		}
-		Path reflection = toReflection(original, source, mirror);
+		Path reflection = reflect(original, source, mirror);
 		if (Files.exists(reflection, NOFOLLOW_LINKS)) {
 			copyAttributes(source, reflection);
 		}
@@ -88,7 +88,7 @@ public class SynchronizeVisitor implements FileVisitor<Path> {
 		return CONTINUE;
 	}
 	
-	protected static Path toReflection(Path original, Path source, Path mirror) {
+	protected static Path reflect(Path original, Path source, Path mirror) {
 		return mirror.resolve(original.relativize(source));
 	}
 

@@ -21,6 +21,7 @@ import picocli.CommandLine.Spec;
 @Slf4j
 public class CommandLineProcessor implements Runnable {
 	@Inject private MirrorMaker mirrorMaker;
+	@Inject private ShadowCollector shadowCollector;
 	@Inject private LinkService linkService;
 	@Inject private StatisticsService statsService;
     @Spec private CommandSpec commandSpecification;
@@ -29,16 +30,6 @@ public class CommandLineProcessor implements Runnable {
 	public void run() {
 		commandSpecification.commandLine().usage(System.out);
 	}
-
-    @Command(name = "start")
-    public void start() throws Exception {
-		logger.info("Command: start");
-    }
-
-    @Command(name = "delete", aliases = "clean")
-    public void delete() throws Exception {
-		logger.info("Command: delete");
-    }
 
     @Command(name = "mirror", aliases = "copy")
     public void createMirrors() throws Exception {
@@ -49,10 +40,32 @@ public class CommandLineProcessor implements Runnable {
 		logger.info("Execution time: {}", timer);
     }
 
-    @Command(name = "show", aliases = "list")
-    public void showLinks() throws Exception {
-		logger.info("Command: show");
-    	linkService.showLinks();
+    @Command(name = "stats", aliases = "statistics")
+    public void calculateStatistics() throws Exception {
+		logger.info("Command: statistics");
+		Statistics stats = statsService.calculateStatistics();
+		logger.info(stats.toString());
+    }
+
+    @Command(name = "delete", aliases = {"clean", "collect"})
+    public void delete() throws Exception {
+		logger.info("Command: delete");
+		shadowCollector.collect();
+    }
+
+    @Command(name = "start")
+    public void start() throws Exception {
+		logger.info("Command: start");
+    }
+
+    @Command(name = "status")
+    public void status() throws Exception {
+		logger.info("Command: status");
+    }
+
+    @Command(name = "recover")
+    public void recoverFromMirrors() {
+		logger.info("Command: recover");
     }
 
     @Command(name = "add")
@@ -71,15 +84,9 @@ public class CommandLineProcessor implements Runnable {
     	linkService.removeLink(position);
     }
 
-    @Command(name = "stats", aliases = "statistics")
-    public void calculateStatistics() throws Exception {
-		logger.info("Command: statistics");
-		Statistics stats = statsService.calculateStatistics();
-		logger.info(stats.toString());
-    }
-
-    @Command(name = "recover")
-    public void recoverFromMirrors() {
-		logger.info("Command: recover");
+    @Command(name = "show", aliases = "list")
+    public void showLinks() throws Exception {
+		logger.info("Command: show");
+    	linkService.showLinks();
     }
 }

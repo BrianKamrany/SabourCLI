@@ -27,7 +27,7 @@ public class StatisticsVisitor implements FileVisitor<Path> {
 
 	@Override
 	public FileVisitResult preVisitDirectory(Path source, BasicFileAttributes unused) throws IOException {
-		Path reflection = SynchronizeVisitor.toReflection(original, source, mirror);
+		Path reflection = SynchronizeVisitor.reflect(original, source, mirror);
 		if (!SynchronizeVisitor.isSystem(source) && !Files.exists(reflection, NOFOLLOW_LINKS)) {
 			stats.incrementCount();
 		}
@@ -36,7 +36,7 @@ public class StatisticsVisitor implements FileVisitor<Path> {
 
 	@Override
 	public FileVisitResult visitFile(Path source, BasicFileAttributes attributes) throws IOException {
-		Path reflection = SynchronizeVisitor.toReflection(original, source, mirror);
+		Path reflection = SynchronizeVisitor.reflect(original, source, mirror);
 		if (!SynchronizeVisitor.isSystem(source) && !SynchronizeVisitor.isMirrored(source, reflection, true)) {
 			stats.incrementCount();
 			stats.addBytes(attributes.size());
@@ -51,7 +51,7 @@ public class StatisticsVisitor implements FileVisitor<Path> {
 			logger.warn("", ex);
 			return CONTINUE;
 		}
-		Path reflection = SynchronizeVisitor.toReflection(original, source, mirror);
+		Path reflection = SynchronizeVisitor.reflect(original, source, mirror);
 		if (Files.exists(reflection, NOFOLLOW_LINKS)) {
 			stats.incrementCount();
 		}

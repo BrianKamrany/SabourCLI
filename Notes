@@ -28,6 +28,14 @@ add
 -mirror=C:\Programming\eclipse-java-2022-03-R-win32-x86_64\workspace\SabourCLI\src\test\resources\mirror
 
 add
+-original=C:\Data
+-mirror=U:\DataBackup
+
+add
+-original=C:\Data\Music
+-mirror=U:\DataBackup\Music
+
+add
 -original=C:\Programming\eclipse-java-2022-03-R-win32-x86_64\workspace\SabourCLI\src\test\resources\original
 -mirror=C:\Programming\eclipse-java-2022-03-R-win32-x86_64\workspace\SabourCLI\src\test\resources\mirror
 -bidirectional
@@ -51,3 +59,10 @@ bidirectional
 
 file walking fails on this absolutely
 java.nio.file.AccessDeniedException: U:\System Volume Information
+
+ETA
+8 = 90 seconds
+800 = 9000 seconds = 2.5 hours
+
+Files: 67752
+Bytes: 413908853418
