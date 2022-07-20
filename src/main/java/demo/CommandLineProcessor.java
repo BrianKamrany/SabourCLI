@@ -63,10 +63,10 @@ public class CommandLineProcessor implements Runnable {
 		logger.info("Command: status");
     }
 
-    @Command(name = "recover")
+    /*@Command(name = "recover")
     public void recoverFromMirrors() {
 		logger.info("Command: recover");
-    }
+    }*/
 
     @Command(name = "add")
     public void addLink(
