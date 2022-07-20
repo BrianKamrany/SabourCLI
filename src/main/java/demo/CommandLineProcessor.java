@@ -1,7 +1,16 @@
 package demo;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.text.ParseException;
+import java.util.Date;
+
 import javax.inject.Inject;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Stopwatch;
@@ -38,6 +47,7 @@ public class CommandLineProcessor implements Runnable {
     	mirrorMaker.synchronize();
 		timer.stop();
 		logger.info("Execution time: {}", timer);
+		writeDateToFile();
     }
 
     @Command(name = "stats", aliases = "statistics")
@@ -61,6 +71,9 @@ public class CommandLineProcessor implements Runnable {
     @Command(name = "status")
     public void status() throws Exception {
 		logger.info("Command: status");
+		Date date = readDateFromFile();
+		String msg = date != null ? "Last Backup: " + date.toString() : "A backup has not been made.";
+		logger.info(msg);
     }
 
     /*@Command(name = "recover")
@@ -89,4 +102,19 @@ public class CommandLineProcessor implements Runnable {
 		logger.info("Command: show");
     	linkService.showLinks();
     }
+
+	private void writeDateToFile() throws IOException {
+		File file = new File("last_backup.txt");
+		FileUtils.writeStringToFile(file, String.valueOf(new Date().getTime()), StandardCharsets.UTF_8);
+	}
+
+	private Date readDateFromFile() throws IOException, ParseException {
+		if (!Files.exists(Paths.get("last_backup.txt")))
+			return null;
+		
+		File file = new File("last_backup.txt");
+		String lastBackup = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+		Date date = new Date(Long.parseLong(lastBackup));
+		return date;
+	}
 }
