@@ -51,10 +51,10 @@ public class StatisticsVisitor implements FileVisitor<Path> {
 			logger.warn("", ex);
 			return CONTINUE;
 		}
-		Path reflection = SynchronizeVisitor.reflect(original, source, mirror);
+		/*Path reflection = SynchronizeVisitor.reflect(original, source, mirror);
 		if (Files.exists(reflection, NOFOLLOW_LINKS)) {
 			stats.incrementCount();
-		}
+		}*/
 		return CONTINUE;
 	}
 

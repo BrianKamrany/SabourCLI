@@ -30,9 +30,10 @@ import picocli.CommandLine.Spec;
 @Slf4j
 public class CommandLineProcessor implements Runnable {
 	@Inject private MirrorMaker mirrorMaker;
+	@Inject private StatisticsService statsService;
 	@Inject private ShadowCollector shadowCollector;
 	@Inject private LinkService linkService;
-	@Inject private StatisticsService statsService;
+	
     @Spec private CommandSpec commandSpecification;
     
 	@Override
@@ -40,14 +41,14 @@ public class CommandLineProcessor implements Runnable {
 		commandSpecification.commandLine().usage(System.out);
 	}
 
-    @Command(name = "mirror", aliases = "copy")
+    @Command(name = "mirror", aliases = {"copy", "clone"})
     public void createMirrors() throws Exception {
 		logger.info("Command: mirror");
 		Stopwatch timer = Stopwatch.createStarted();
     	mirrorMaker.synchronize();
 		timer.stop();
 		logger.info("Execution time: {}", timer);
-		writeDateToFile();
+		writeLastBackupToFile();
     }
 
     @Command(name = "stats", aliases = "statistics")
@@ -66,14 +67,18 @@ public class CommandLineProcessor implements Runnable {
     @Command(name = "start")
     public void start() throws Exception {
 		logger.info("Command: start");
+		calculateStatistics();
+		Thread.sleep(4000);
+		delete();
+		createMirrors();
     }
 
     @Command(name = "status")
     public void status() throws Exception {
 		logger.info("Command: status");
-		Date date = readDateFromFile();
-		String msg = date != null ? "Last Backup: " + date.toString() : "A backup has not been made.";
-		logger.info(msg);
+		Date date = readLastBackupFromFile();
+		String lastBackupMessage = date != null ? "Last Backup: " + date.toString() : "A backup has not been made.";
+		logger.info(lastBackupMessage);
     }
 
     /*@Command(name = "recover")
@@ -84,11 +89,11 @@ public class CommandLineProcessor implements Runnable {
     @Command(name = "add")
     public void addLink(
     		@Option(names = "-original", required = true) String original, 
-    		@Option(names = "-mirror", required = true) String mirror, 
-    		@Option(names = "-bidirectional") boolean bidirectional/*, 
+    		@Option(names = "-mirror", required = true) String mirror/*, 
+    		@Option(names = "-bidirectional") boolean bidirectional, 
     		@Option(names = "-options") String options*/) throws Exception {
 		logger.info("Command: add");
-    	linkService.addLink(original, mirror, bidirectional);
+    	linkService.addLink(original, mirror);
     }
 
     @Command(name = "remove")
@@ -103,12 +108,12 @@ public class CommandLineProcessor implements Runnable {
     	linkService.showLinks();
     }
 
-	private void writeDateToFile() throws IOException {
+	private void writeLastBackupToFile() throws IOException {
 		File file = new File("last_backup.txt");
 		FileUtils.writeStringToFile(file, String.valueOf(new Date().getTime()), StandardCharsets.UTF_8);
 	}
 
-	private Date readDateFromFile() throws IOException, ParseException {
+	private Date readLastBackupFromFile() throws IOException, ParseException {
 		if (!Files.exists(Paths.get("last_backup.txt")))
 			return null;
 		

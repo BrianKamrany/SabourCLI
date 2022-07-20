@@ -23,7 +23,7 @@ public class LinkService {
 	
 	private ObjectMapper jsonMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 	
-	public void addLink(String original, String mirror, boolean bidirectional) throws StreamReadException, DatabindException, IOException {
+	public void addLink(String original, String mirror) throws StreamReadException, DatabindException, IOException {
     	logger.info("Adding link.");
 
 		Links links = readLinks();
@@ -31,7 +31,7 @@ public class LinkService {
 		Link link = new Link();
 		link.setOriginal(Paths.get(original));
 		link.setMirror(Paths.get(mirror));
-		link.setRelationship(!bidirectional ? Relationship.STANDARD : Relationship.BIDIRECTIONAL);
+		link.setRelationship(Relationship.STANDARD);
 		links.add(link);
 
 		if (Files.notExists(LINKS_PATH))

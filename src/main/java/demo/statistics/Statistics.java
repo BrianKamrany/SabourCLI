@@ -27,7 +27,7 @@ public class Statistics {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Files: " + String.format("%,d", count) + "\n");
-		builder.append("Size: " + FileUtils.byteCountToDisplaySize(bytes) + "\n");
+		builder.append("Size: " + FileUtils.byteCountToDisplaySize(bytes));
 		
 		//builder.append("ETA: " + "1.5 hours" + "\n");
 		return builder.toString();
