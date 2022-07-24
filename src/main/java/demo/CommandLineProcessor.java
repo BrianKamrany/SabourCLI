@@ -41,7 +41,7 @@ public class CommandLineProcessor implements Runnable {
 		commandSpecification.commandLine().usage(System.out);
 	}
 
-    @Command(name = "mirror", aliases = {"copy", "clone"})
+    @Command(name = "mirror", aliases = {"copy", "clone"}, description = "Starts backing up files.")
     public void createMirrors() throws Exception {
 		logger.info("Command: mirror");
 		Stopwatch timer = Stopwatch.createStarted();
@@ -51,20 +51,20 @@ public class CommandLineProcessor implements Runnable {
 		writeLastBackupToFile();
     }
 
-    @Command(name = "stats", aliases = "statistics")
+    @Command(name = "stats", aliases = "statistics", description = "Displays how many files will be copied and how much disk space is needed.")
     public void calculateStatistics() throws Exception {
 		logger.info("Command: statistics");
 		Statistics stats = statsService.calculateStatistics();
 		logger.info(stats.toString());
     }
 
-    @Command(name = "delete", aliases = {"clean", "collect"})
+    @Command(name = "delete", aliases = {"clean", "collect"}, description = "Deletes extraneous files from backups.")
     public void delete() throws Exception {
 		logger.info("Command: delete");
 		shadowCollector.collect();
     }
 
-    @Command(name = "start")
+    @Command(name = "start", description = "Combined command for stats, delete, and mirror.")
     public void start() throws Exception {
 		logger.info("Command: start");
 		calculateStatistics();
@@ -73,7 +73,7 @@ public class CommandLineProcessor implements Runnable {
 		createMirrors();
     }
 
-    @Command(name = "status")
+    @Command(name = "status", description = "Shows the date and time of the last successful backup.")
     public void status() throws Exception {
 		logger.info("Command: status");
 		Date date = readLastBackupFromFile();
@@ -86,7 +86,7 @@ public class CommandLineProcessor implements Runnable {
 		logger.info("Command: recover");
     }*/
 
-    @Command(name = "add")
+    @Command(name = "add", description = "Adds a backup relationship.")
     public void addLink(
     		@Option(names = "-original", required = true) String original, 
     		@Option(names = "-mirror", required = true) String mirror/*, 
@@ -96,13 +96,13 @@ public class CommandLineProcessor implements Runnable {
     	linkService.addLink(original, mirror);
     }
 
-    @Command(name = "remove")
+    @Command(name = "remove", description = "Removes a backup relationship by position.")
     public void removeLink(@Parameters(index = "0") int position) throws Exception {
 		logger.info("Command: remove");
     	linkService.removeLink(position);
     }
 
-    @Command(name = "show", aliases = "list")
+    @Command(name = "show", aliases = "list", description = "Shows backup relationships and positions.")
     public void showLinks() throws Exception {
 		logger.info("Command: show");
     	linkService.showLinks();
